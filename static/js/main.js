@@ -17,7 +17,11 @@ function setCanvasSize() {
   canvas.width = Math.floor(cssWidth * dpr);
   canvas.height = Math.floor(cssHeight * dpr);
   canvas.style.height = `${cssHeight}px`;
-  ctx.resetTransform();
+  if (typeof ctx.resetTransform === "function") {
+    ctx.resetTransform();
+  } else {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
   ctx.scale(dpr, dpr);
 }
 
