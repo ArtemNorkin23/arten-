@@ -10,6 +10,20 @@ const theme = {
   ballRadius: 30,
 };
 
+function drawEllipse(ctx, x, y, rx, ry, rotation = 0) {
+  if (typeof ctx.ellipse === "function") {
+    ctx.ellipse(x, y, rx, ry, rotation, 0, Math.PI * 2);
+  } else {
+    // Fallback для старых движков canvas без ellipse
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.scale(rx, ry);
+    ctx.arc(0, 0, 1, 0, Math.PI * 2);
+    ctx.restore();
+  }
+}
+
 function setCanvasSize() {
   const dpr = window.devicePixelRatio || 1;
   const cssWidth = canvas.clientWidth || 960;
@@ -97,7 +111,7 @@ function drawPins(pins) {
     // Тень
     ctx.beginPath();
     ctx.fillStyle = "rgba(0,0,0,0.16)";
-    ctx.ellipse(x + 8, y + pinRadius * 1.15, pinRadius * 0.75, pinRadius * 0.5, 0, 0, Math.PI * 2);
+    drawEllipse(ctx, x + 8, y + pinRadius * 1.15, pinRadius * 0.75, pinRadius * 0.5, 0);
     ctx.fill();
 
     // Тело
@@ -105,7 +119,7 @@ function drawPins(pins) {
     ctx.fillStyle = "#f8fafc";
     ctx.strokeStyle = "#e11d48";
     ctx.lineWidth = 3;
-    ctx.ellipse(x, y, pinRadius, pinRadius * 1.7, 0, 0, Math.PI * 2);
+    drawEllipse(ctx, x, y, pinRadius, pinRadius * 1.7, 0);
     ctx.fill();
     ctx.stroke();
 
@@ -120,7 +134,14 @@ function drawPins(pins) {
     // Блик
     ctx.beginPath();
     ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.ellipse(x - pinRadius * 0.2, y - pinRadius * 0.8, pinRadius * 0.25, pinRadius * 0.4, 0, 0, Math.PI * 2);
+    drawEllipse(
+      ctx,
+      x - pinRadius * 0.2,
+      y - pinRadius * 0.8,
+      pinRadius * 0.25,
+      pinRadius * 0.4,
+      0
+    );
     ctx.fill();
   });
 }
